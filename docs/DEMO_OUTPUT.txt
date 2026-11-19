@@ -1,0 +1,130 @@
+FineLedger demo | today = 2026-11-19 | ledger file = <tmp>/ledger.jsonl
+Seeded: 111 chained records covering 10 closed orders and 2 open ones.
+
+========================================================================
+1. WASTAGE AGENT: a new chain order for Murugan. What should we agree?
+========================================================================
+Murugan's realised wastage on chain over 7 orders: median 260 bp (typical band 230-290 bp). Suggested agreement: 260 bp (2.60%). Both parties decide; this is a starting point.
+
+========================================================================
+2. INTAKE: Lakshmi Jewellers sends a WhatsApp message (2 days ago)
+========================================================================
+  message : "issue 40.000g 22K order O-201 wastage 2.6%"
+  parsed  : ISSUE 40.000 g @ 916 = 36.640 g fine gold, wastage 260 bp
+  status  : pending (needs Murugan's confirmation before it counts)
+  rejected "issue ten grams order O-201" -> What weight? Add it in grams, e.g. '10.250g'. Weights are never guessed.
+  rejected "issue 10.2504g 22K order O-201 wastage 2%" -> weights are recorded to the milligram (3 decimals of a gram)
+
+========================================================================
+3. AGENT LOOP: what the agents do right now
+========================================================================
+  -> K1 [ta] (confirm_request) Lakshmi Jewellers O-201-க்கு தங்கம் வழங்கல் பதிவு செய்தார்: 40.000 g (தூய தங்கம் 36.640 g). சரியென்றால் 1, தவறு என்றால் 2 அனுப்பவும்.
+  -> J1 [en] (wastage_flag) Order O-202: realised wastage 533 bp vs 258 bp typical for this karigar on chain (0.640 g beyond the agreed allowance). This is a prompt to check, not a finding.
+  -> K1 [en] (wastage_flag) Order O-202: realised wastage 533 bp vs 258 bp typical for this karigar on chain (0.640 g beyond the agreed allowance). This is a prompt to check, not a finding.
+  -> J1 [en] (risk_alert) Order O-201 (chain) due 2026-11-22: 3 days left, about 4.6 days of work expected (median 6 days, 1 other open order(s)). Risk: RED.
+  -> K1 [en] (risk_alert) Order O-201 (chain) due 2026-11-22: 3 days left, about 4.6 days of work expected (median 6 days, 1 other open order(s)). Risk: RED.
+  -> J1 [en] (payment_due) Order O-202 was delivered 11 days ago and Rs 6,000 is still unpaid.
+  -> K1 [ta] (payment_due) O-202 டெலிவரி ஆகி 11 நாட்கள் ஆகின்றன; ₹6,000 இன்னும் நிலுவையில் உள்ளது.
+  reassignment options for O-201 (needs jeweller approval): [{'karigar': 'K2', 'expected_days': 3.0}]
+
+========================================================================
+4. KARIGAR CONFIRMS (reply '1' on WhatsApp)
+========================================================================
+  entry 113 is now confirmed
+
+========================================================================
+5. 'THE JEWELLER'S NUMBER DIFFERS FROM MINE': diff two notebooks
+========================================================================
+  2 agree, 1 differ in weight, 1 only in A, 1 only in B
+  differs : 2026-10-09 RETURN  jeweller 24.100 g vs karigar 24.400 g  (delta 0.300 g)
+  only jeweller has: 2026-10-12 ISSUE 15.500 g
+  only karigar has : 2026-10-27 SCRAP 0.450 g
+
+========================================================================
+6. RECONCILIATION: settlement drafted from CONFIRMED entries, approved by BOTH
+========================================================================
+  O-202: karigar owes 0.640 g fine gold beyond agreed wastage; jeweller owes Rs 6,000 labour
+  blocked (unconfirmed entries): none
+  status : awaiting, awaiting ['J1', 'K1']
+  after Murugan approves : awaiting, awaiting ['J1']
+  after Lakshmi approves : approved
+
+========================================================================
+7. PAYER RECORD: jewellers are visible too
+========================================================================
+  Lakshmi Jewellers: {'orders_paid': 9, 'avg_days_to_pay': 1.9, 'orders_unpaid': 1}
+
+========================================================================
+8. TAMPER TEST: change one weight in the ledger file
+========================================================================
+  original ledger verifies: True
+  tampered ledger verifies: False  ->  record 102: contents do not match their hash (tampered)
+  signatures all valid    : True
+
+========================================================================
+9. TRUST PASSPORT: owned by the karigar, shared only with consent
+========================================================================
+  before consent: refused (K1 has not shared the passport with L1)
+  after consent : {
+  "karigar": "K1",
+  "name": "Murugan",
+  "orders_delivered": 7,
+  "on_time_rate": 1.0,
+  "late_orders": 1,
+  "late_excused_jeweller_or_customer": 1,
+  "within_agreed_wastage_rate": 0.857,
+  "wastage_consistency_spread_bp": 10,
+  "orders_without_open_dispute_rate": 1.0,
+  "band": "strong record",
+  "how_to_read": "Components, not a hidden score. Lateness caused by the jeweller or customer is excluded when both parties confirmed the delay note. Thresholds are illustrative."
+}
+
+========================================================================
+10. THE KARIGAR'S OWN STATEMENT (full access, always)
+========================================================================
+ACCOUNT STATEMENT - Murugan (K1)
+
+Order O-101 - chain - for Lakshmi Jewellers - due 2026-07-28
+  fine gold issued 32.060 g | returned 31.291 g | scrap 0.000 g | refiner recovery 0.000 g
+  agreed wastage 0.962 g | loss 0.769 g | owed beyond wastage 0.000 g
+  labour Rs 5,000 | paid Rs 5,000 | outstanding Rs 0
+
+Order O-102 - chain - for Lakshmi Jewellers - due 2026-08-13
+  fine gold issued 38.930 g | returned 37.937 g | scrap 0.000 g | refiner recovery 0.000 g
+  agreed wastage 1.168 g | loss 0.993 g | owed beyond wastage 0.000 g
+  labour Rs 5,500 | paid Rs 5,500 | outstanding Rs 0
+
+Order O-103 - chain - for Lakshmi Jewellers - due 2026-08-25
+  fine gold issued 25.648 g | returned 24.956 g | scrap 0.000 g | refiner recovery 0.000 g
+  agreed wastage 0.769 g | loss 0.692 g | owed beyond wastage 0.000 g
+  labour Rs 4,200 | paid Rs 4,200 | outstanding Rs 0
+
+Order O-104 - chain - for Lakshmi Jewellers - due 2026-09-10
+  fine gold issued 45.800 g | returned 44.655 g | scrap 0.000 g | refiner recovery 0.000 g
+  agreed wastage 1.374 g | loss 1.145 g | owed beyond wastage 0.000 g
+  labour Rs 6,500 | paid Rs 6,500 | outstanding Rs 0
+
+Order O-105 - chain - for Lakshmi Jewellers - due 2026-09-27
+  fine gold issued 28.396 g | returned 27.544 g | scrap 0.000 g | refiner recovery 0.000 g
+  agreed wastage 0.852 g | loss 0.852 g | owed beyond wastage 0.000 g
+  labour Rs 4,800 | paid Rs 4,800 | outstanding Rs 0
+
+Order O-106 - chain - for Lakshmi Jewellers - due 2026-10-16
+  fine gold issued 34.808 g | returned 33.903 g | scrap 0.000 g | refiner recovery 0.000 g
+  agreed wastage 1.044 g | loss 0.905 g | owed beyond wastage 0.000 g
+  labour Rs 5,200 | paid Rs 5,200 | outstanding Rs 0
+
+Order O-202 - chain - for Lakshmi Jewellers - due 2026-11-08
+  fine gold issued 27.480 g | returned 25.741 g | scrap 0.275 g | refiner recovery 0.000 g
+  agreed wastage 0.824 g | loss 1.464 g | owed beyond wastage 0.640 g
+  labour Rs 6,000 | paid Rs 0 | outstanding Rs 6,000
+
+Order O-203 - ring - for Lakshmi Jewellers - due 2026-11-29
+  fine gold issued 10.992 g | returned 0.000 g | scrap 0.000 g | refiner recovery 0.000 g
+  IN PROGRESS: 10.992 g fine gold with the karigar (not a loss)
+
+Order O-201 - chain - for Lakshmi Jewellers - due 2026-11-22
+  fine gold issued 36.640 g | returned 0.000 g | scrap 0.000 g | refiner recovery 0.000 g
+  IN PROGRESS: 36.640 g fine gold with the karigar (not a loss)
+
+Ledger integrity: OK (119 records)
