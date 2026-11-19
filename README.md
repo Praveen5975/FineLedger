@@ -90,4 +90,8 @@ tests/               35 tests               docs/              architecture, val
 ```
 
 ## Team
-Fineworks: [INSERT names and roles]
+Fineworks: 
+  1.Praveen Balaji G
+  2.Nitish M
+  3.Sakthi Saran G
+  4.Saranesh S
